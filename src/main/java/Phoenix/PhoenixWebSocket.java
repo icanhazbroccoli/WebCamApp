@@ -15,18 +15,22 @@ public class PhoenixWebSocket {
         this.ws = factory.createSocket(uri);
     }
 
-    PhoenixWebSocket addListener(WebSocketAdapter listener) {
+    public PhoenixWebSocket addListener(WebSocketAdapter listener) {
         this.ws.addListener(listener);
         return this;
     }
 
-    PhoenixWebSocket connect() throws WebSocketException {
+    public PhoenixWebSocket connect() throws WebSocketException {
         this.ws.connect();
         return this;
     }
 
-    PhoenixWebSocket sendMessage(PhoenixSocketMessage message) {
+    public PhoenixWebSocket sendMessage(PhoenixSocketMessage message) {
         this.ws.sendText(message.toJSONString());
         return this;
+    }
+
+    public PhoenixChannel channel(String topic) {
+        return new PhoenixChannel(topic, null, this);
     }
 }

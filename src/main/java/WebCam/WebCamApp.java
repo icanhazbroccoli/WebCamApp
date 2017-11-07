@@ -1,5 +1,6 @@
 package WebCam;
 
+import Phoenix.PhoenixChannel;
 import Phoenix.PhoenixWebSocket;
 import Phoenix.PhoenixSocketMessage;
 import com.neovisionaries.ws.client.*;
@@ -19,20 +20,16 @@ public class WebCamApp {
             PhoenixWebSocket ws = new PhoenixWebSocket(
                     factory, URI.create("ws://whitebox.dev:4000/socket/websocket"));
 
-            ws.addListener(new WebCamWebSocketAdapter());
+//            ws.addListener(new WebCamWebSocketAdapter());
 
             System.out.println("Connecting to socket");
             ws.connect();
 
-            System.out.println("Sending join message");
-            ws.sendMessage(
-                    new PhoenixSocketMessage.Builder()
-                            .set("event", "phx_join")
-                            .set("topic", "webcams:b079542f-c728-4939-a1bc-90e51499603e")
-                            .set("payload", new JSONObject())
-                            .set("ref", null)
-                            .build()
-            );
+            PhoenixChannel channel = ws.channel("webcams:b079542f-c728-4939-a1bc-90e51499603e");
+            channel.on(PhoenixChannel.CHANNEL_EVENT.REPLY, (message -> {
+                System.out.println("Phoenix replied");
+            }));
+            channel.join();
 
             Thread.sleep(5_000);
         } catch (InterruptedException ex) {
